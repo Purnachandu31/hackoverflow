@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <button id="clearButton">Clear Tasks Data</button>
+  <h1>Create Tasks</h1>
+  <form action="/create-tasks" method="POST">
+    <label for="teamName">Team Name:</label>
+    <input type="text" id="teamName" name="teamName" required><br><br>
+
+    <label for="taskCount">Number of Tasks:</label>
+    <input type="number" id="taskCount" name="taskCount" required><br><br>
+
+    <div id="taskInputs"></div> <!-- Dynamic task inputs will be appended here -->
+
+    <button type="submit">Create Tasks</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("taskCount").addEventListener("input", function() {
+    const taskCount = this.value;
+    const taskInputsDiv = document.getElementById("taskInputs");
+    taskInputsDiv.innerHTML = ""; // Clear previous inputs
+
+    for (let i = 0; i < taskCount; i++) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = `task${i + 1}`;
+      input.placeholder = `Task ${i + 1}`;
+      input.required = true;
+      taskInputsDiv.appendChild(input);
+      taskInputsDiv.appendChild(document.createElement("br"));
+    }
+  });
+
+  document.getElementById("clearButton").addEventListener("click", function() {
+    fetch("/clear-tasks", {
+      method: "POST",
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.message); // Log the response from the server
+      // Optionally, you can handle the response here, such as displaying a message to the user.
+    })
+    .catch(error => {
+      console.error(error); // Handle errors, if any
+    });
+  });
+  
+</script>
+
+<%- include('partials/footer') %>
+
